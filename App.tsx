@@ -6,13 +6,118 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { HeroScene, WaveScene } from './components/QuantumScene';
 import { StatCard, Playlist, WrappedSummary, ImageGrid, MetallicaCard } from './components/Diagrams';
-import { Play, Pause, Heart, Music2, Battery, Wifi, Signal, Share2 } from 'lucide-react';
+import { Play, Pause, Heart, Music2, Battery, Wifi, Signal, Share2, Lock, Delete } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Relaxing acoustic/piano ambient music
 const MUSIC_URL = "https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3";
 
+// Lock Screen Component
+const LockScreen: React.FC<{ onUnlock: () => void; currentTime: string }> = ({ onUnlock, currentTime }) => {
+  const [pin, setPin] = useState("");
+  const [error, setError] = useState(false);
+  const [currentDate, setCurrentDate] = useState("");
+  const CORRECT_PIN = "2412";
+
+  useEffect(() => {
+    const now = new Date();
+    setCurrentDate(now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
+  }, []);
+
+  const handleDigit = (digit: string) => {
+    if (pin.length < 4) {
+      const newPin = pin + digit;
+      setPin(newPin);
+      setError(false);
+      
+      if (newPin.length === 4) {
+        if (newPin === CORRECT_PIN) {
+          setTimeout(() => onUnlock(), 300);
+        } else {
+          setError(true);
+          setTimeout(() => {
+            setPin("");
+            setError(false);
+          }, 500);
+        }
+      }
+    }
+  };
+
+  const handleDelete = () => {
+    setPin(pin.slice(0, -1));
+    setError(false);
+  };
+
+  const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "delete"];
+
+  return (
+    <motion.div 
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0, scale: 1.1 }}
+      transition={{ duration: 0.5 }}
+      className="absolute inset-0 z-[100] bg-gradient-to-b from-[#1a1a2e] via-[#16213e] to-[#0f0f23] flex flex-col items-center justify-between py-16 px-8"
+    >
+      {/* Time & Date */}
+      <div className="text-center mt-8">
+        <div className="text-7xl font-thin text-white tracking-tight">{currentTime}</div>
+        <div className="text-lg text-white/60 mt-2">{currentDate}</div>
+      </div>
+
+      {/* Lock Icon & PIN Display */}
+      <div className="flex flex-col items-center">
+        <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-6">
+          <Lock size={24} className="text-white/80" />
+        </div>
+        <p className="text-white/60 text-sm mb-4">Enter PIN to unlock Wrapped</p>
+        
+        {/* PIN Dots */}
+        <div className={`flex gap-4 ${error ? 'animate-shake' : ''}`}>
+          {[0, 1, 2, 3].map((i) => (
+            <motion.div
+              key={i}
+              animate={pin.length > i ? { scale: [1, 1.2, 1] } : {}}
+              className={`w-4 h-4 rounded-full border-2 transition-all duration-200 ${
+                pin.length > i 
+                  ? error ? 'bg-red-500 border-red-500' : 'bg-spotify-green border-spotify-green' 
+                  : 'border-white/40 bg-transparent'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Number Pad */}
+      <div className="grid grid-cols-3 gap-6 mb-8">
+        {digits.map((digit, i) => (
+          <div key={i} className="flex items-center justify-center">
+            {digit === "" ? (
+              <div className="w-20 h-20" />
+            ) : digit === "delete" ? (
+              <button
+                onClick={handleDelete}
+                className="w-20 h-20 rounded-full flex items-center justify-center text-white/60 hover:bg-white/10 active:bg-white/20 transition-colors"
+              >
+                <Delete size={24} />
+              </button>
+            ) : (
+              <button
+                onClick={() => handleDigit(digit)}
+                className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-3xl font-light text-white hover:bg-white/20 active:bg-white/30 transition-colors"
+              >
+                {digit}
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+};
+
 const App: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLocked, setIsLocked] = useState(true);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState("");
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -34,6 +139,16 @@ const App: React.FC = () => {
         audioRef.current.play();
       }
       setIsPlaying(!isPlaying);
+    }
+  };
+
+  // Handle unlock - start music automatically
+  const handleUnlock = () => {
+    setIsLocked(false);
+    if (audioRef.current) {
+      audioRef.current.volume = 0.15;
+      audioRef.current.play();
+      setIsPlaying(true);
     }
   };
 
@@ -65,6 +180,13 @@ const App: React.FC = () => {
       
       {/* --- iPHONE CHASSIS --- */}
       <div className="relative w-full max-w-[430px] h-[920px] bg-black rounded-[55px] shadow-[0_0_0_12px_#1f1f1f,0_0_0_14px_#3f3f3f,0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden border-[8px] border-black ring-1 ring-white/10 z-10 flex flex-col transform transition-transform duration-700 ease-out hover:scale-[1.01]">
+         
+         {/* Lock Screen Overlay */}
+         <AnimatePresence>
+           {isLocked && (
+             <LockScreen onUnlock={handleUnlock} currentTime={currentTime} />
+           )}
+         </AnimatePresence>
          
          {/* Status Bar */}
          <div className="absolute top-0 left-0 right-0 h-14 z-50 px-8 flex justify-between items-end pb-3 text-white font-medium text-[13px] pointer-events-none select-none">
