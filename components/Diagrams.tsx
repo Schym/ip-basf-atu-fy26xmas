@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Play, TrendingUp, Users, Zap, Music, MoreHorizontal, Clock, Hash, Skull } from 'lucide-react';
+import { Play, TrendingUp, Users, Zap, Music, MoreHorizontal, Clock, Hash, Skull, DollarSign } from 'lucide-react';
 
 // --- WRAPPED SUMMARY CARD (Top Genre Style) ---
 export const WrappedSummary: React.FC = () => {
@@ -108,38 +108,38 @@ interface TrackProps {
 }
 
 const Track: React.FC<TrackProps> = ({ index, title, artist, plays, duration }) => (
-    <div className="group flex items-center gap-4 p-3 rounded-md hover:bg-white/10 transition-colors cursor-default">
-        <div className="w-6 text-center text-spotify-light text-sm font-mono group-hover:hidden">{index}</div>
-        <div className="w-6 hidden group-hover:flex justify-center text-white"><Play size={14} fill="white"/></div>
+    <div className="group flex items-center gap-3 p-2 rounded-md hover:bg-white/10 transition-colors cursor-default">
+        <div className="w-5 text-center text-spotify-light text-xs font-mono group-hover:hidden">{index}</div>
+        <div className="w-5 hidden group-hover:flex justify-center text-white"><Play size={12} fill="white"/></div>
         
         <div className="flex-1 min-w-0">
-            <div className="font-bold text-white truncate text-base">{title}</div>
-            <div className="text-sm text-spotify-light truncate">{artist}</div>
+            <div className="font-bold text-white text-sm leading-tight">{title}</div>
+            <div className="text-xs text-spotify-light leading-tight mt-0.5">{artist}</div>
         </div>
         
-        <div className="hidden md:block text-sm text-spotify-light font-medium">{plays}</div>
-        <div className="text-sm text-spotify-light font-mono w-12 text-right">{duration}</div>
+        <div className="text-xs text-spotify-light font-medium text-right w-20">{plays}</div>
+        <div className="text-xs text-spotify-light font-mono w-8 text-right">{duration}</div>
     </div>
 );
 
 export const Playlist: React.FC = () => {
     const tracks = [
-        { title: "Project ChemAI", artist: "Optimization & Logistics • Feat. Azure OpenAI", plays: "High Impact", duration: "Q1" },
-        { title: "Verbund Data Lake", artist: "Infrastructure • The Foundation", plays: "Scale", duration: "Q2" },
-        { title: "Supply Chain Symphony", artist: "Dynamics 365 • Real-time beats", plays: "Efficiency", duration: "Q2" },
-        { title: "Sustainability Dashboard", artist: "ESG • Green Energy Mix", plays: "Future Ready", duration: "Q3" },
-        { title: "Co-Pilot Rollout", artist: "Productivity • The Global Tour", plays: "Viral", duration: "Q4" },
+        { title: "Project ChemAI", artist: "Optimization • Azure OpenAI", plays: "High Impact", duration: "Q1" },
+        { title: "Verbund Data Lake", artist: "Infrastructure • Foundation", plays: "Scale", duration: "Q2" },
+        { title: "Supply Chain Symphony", artist: "Dynamics 365 • Real-time", plays: "Efficiency", duration: "Q2" },
+        { title: "Sustainability Dashboard", artist: "ESG • Green Energy", plays: "Future Ready", duration: "Q3" },
+        { title: "Co-Pilot Rollout", artist: "Productivity • The Tour", plays: "Viral", duration: "Q4" },
     ];
 
     return (
         <div className="w-full">
-            <div className="flex items-center gap-4 text-xs font-bold text-spotify-light uppercase tracking-widest border-b border-white/10 pb-2 mb-2 px-3">
-                <div className="w-6 text-center">#</div>
+            <div className="flex items-center gap-3 text-[10px] font-bold text-spotify-light uppercase tracking-wider border-b border-white/10 pb-2 mb-2 px-2">
+                <div className="w-5 text-center"><Hash size={10} className="inline"/></div>
                 <div className="flex-1">Title</div>
-                <div className="hidden md:block">Impact Level</div>
-                <div className="w-12 text-right"><Clock size={14} className="inline"/></div>
+                <div className="w-20 text-right">Impact Level</div>
+                <div className="w-8 text-right"><Clock size={10} className="inline"/></div>
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
                 {tracks.map((track, i) => (
                     <Track key={i} index={i + 1} {...track} />
                 ))}
@@ -152,22 +152,21 @@ export const Playlist: React.FC = () => {
 export const StatCard: React.FC<{title: string, value: string, subtitle: string, color: string, icon: string}> = ({ title, value, subtitle, color, icon }) => {
     return (
         <motion.div 
-            whileHover={{ y: -10 }}
-            className={`p-1 rounded-2xl bg-gradient-to-br ${color} h-full`}
+            whileHover={{ scale: 1.02 }}
+            className={`p-[2px] rounded-2xl bg-gradient-to-r ${color} h-full`}
         >
-            <div className="bg-[#181818] h-full rounded-xl p-6 flex flex-col items-center text-center relative overflow-hidden">
-                {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-                
-                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mb-4 z-10">
-                    {icon === 'teams' && <Users className="text-white" />}
-                    {icon === 'copilot' && <Zap className="text-white" />}
-                    {icon === 'coffee' && <Music className="text-white" />}
+            <div className="bg-[#181818] h-full rounded-[14px] p-5 flex items-center gap-5 relative overflow-hidden">
+                <div className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center shrink-0">
+                    {icon === 'teams' && <Users size={28} className="text-white" />}
+                    {icon === 'copilot' && <Zap size={28} className="text-white" />}
+                    {icon === 'coffee' && <Music size={28} className="text-white" />}
+                    {icon === 'dollar' && <DollarSign size={28} className="text-white" />}
                 </div>
-
-                <div className="text-spotify-light font-bold text-sm tracking-widest uppercase mb-2 z-10">{title}</div>
-                <div className="text-4xl md:text-5xl font-black text-white mb-4 z-10">{value}</div>
-                <p className="text-sm text-spotify-light z-10">{subtitle}</p>
+                <div className="flex-1 min-w-0">
+                    <div className="text-spotify-light font-semibold text-sm uppercase tracking-wide mb-1">{title}</div>
+                    <div className="text-4xl font-black text-white leading-none">{value}</div>
+                    <div className="text-sm text-spotify-light mt-2">{subtitle}</div>
+                </div>
             </div>
         </motion.div>
     );
@@ -175,33 +174,27 @@ export const StatCard: React.FC<{title: string, value: string, subtitle: string,
 
 // --- IMAGE GRID (Outtakes) ---
 export const ImageGrid: React.FC = () => {
-    // Placeholders for user to swap later
-    const placeholders = [
-        { color: "bg-pink-500", caption: "Team Dinner @ Redmond" },
-        { color: "bg-blue-500", caption: "Hackathon Winning Moment" },
-        { color: "bg-green-500", caption: "Site Visit Ludwigshafen" },
-        { color: "bg-yellow-500", caption: "Coffee Break Brainstorm" },
+    const images = [
+        { src: "/Dietrich.jpg", caption: "AI Tour in Frankfurt" },
+        { src: "/Martin.jpg", caption: "Generalgenosse Martin" },
+        { src: "/EBC.jpg", caption: "EBC @ Redmond" },
+        { src: "/Weinheim.jpg", caption: "Team Fun in Weinheim" },
     ];
 
     return (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {placeholders.map((item, i) => (
-                <div key={i} className={`relative group aspect-square rounded-md overflow-hidden ${item.color} cursor-pointer`}>
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-4xl opacity-50 rotate-12">📷</span>
-                    </div>
+        <div className="grid grid-cols-2 gap-3">
+            {images.map((item, i) => (
+                <div key={i} className="relative group aspect-square rounded-xl overflow-hidden cursor-pointer shadow-lg">
+                    <img 
+                        src={item.src} 
+                        alt={item.caption}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                     
-                    {/* Caption Overlay */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4 text-center">
-                        <p className="font-bold text-sm">{item.caption}</p>
-                    </div>
-
-                    {/* Badge */}
-                    <div className="absolute top-2 right-2">
-                        <div className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
-                            <Hash size={14} />
-                        </div>
+                    {/* Caption */}
+                    <div className="absolute bottom-0 left-0 right-0 p-2">
+                        <p className="font-bold text-xs text-white drop-shadow-lg">{item.caption}</p>
                     </div>
                 </div>
             ))}

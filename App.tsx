@@ -3,15 +3,39 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { HeroScene, WaveScene } from './components/QuantumScene';
 import { StatCard, Playlist, WrappedSummary, ImageGrid, MetallicaCard } from './components/Diagrams';
 import { Play, Pause, Heart, Music2, Battery, Wifi, Signal, Share2 } from 'lucide-react';
 
+// Relaxing acoustic/piano ambient music
+const MUSIC_URL = "https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3";
+
 const App: React.FC = () => {
-  const [isPlaying, setIsPlaying] = useState(true); // Auto-play by default
+  const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState("");
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  // Set volume when audio loads
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.15; // Very low volume
+    }
+  }, []);
+
+  // Toggle play/pause
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.volume = 0.15;
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
 
   useEffect(() => {
     let interval: any;
@@ -34,10 +58,13 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center p-4">
+    <div className="relative w-full h-full flex items-center justify-center p-2">
+      
+      {/* Hidden Audio Element */}
+      <audio ref={audioRef} src={MUSIC_URL} loop preload="auto" />
       
       {/* --- iPHONE CHASSIS --- */}
-      <div className="relative w-full max-w-[400px] h-[850px] bg-black rounded-[55px] shadow-[0_0_0_12px_#1f1f1f,0_0_0_14px_#3f3f3f,0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden border-[8px] border-black ring-1 ring-white/10 z-10 flex flex-col transform transition-transform duration-700 ease-out hover:scale-[1.01]">
+      <div className="relative w-full max-w-[430px] h-[920px] bg-black rounded-[55px] shadow-[0_0_0_12px_#1f1f1f,0_0_0_14px_#3f3f3f,0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden border-[8px] border-black ring-1 ring-white/10 z-10 flex flex-col transform transition-transform duration-700 ease-out hover:scale-[1.01]">
          
          {/* Status Bar */}
          <div className="absolute top-0 left-0 right-0 h-14 z-50 px-8 flex justify-between items-end pb-3 text-white font-medium text-[13px] pointer-events-none select-none">
@@ -50,15 +77,14 @@ const App: React.FC = () => {
          </div>
 
          {/* Dynamic Island */}
-         <div className="absolute top-3 left-1/2 -translate-x-1/2 w-[120px] h-[35px] bg-black z-[60] rounded-full flex items-center justify-center pointer-events-none">
-            <div className="w-[100px] h-full rounded-full bg-[#101010] flex items-center justify-between px-3">
-               <div className="w-1.5 h-1.5 rounded-full bg-spotify-green animate-pulse"></div>
-               <div className="w-1 h-1 rounded-full bg-[#333]"></div>
+         <div className="absolute top-3 left-1/2 -translate-x-1/2 w-[126px] h-[37px] bg-black z-[60] rounded-[20px] flex items-center justify-center pointer-events-none shadow-[inset_0_0_2px_rgba(255,255,255,0.1)]">
+            <div className="absolute left-[22px] top-1/2 -translate-y-1/2 w-[12px] h-[12px] rounded-full bg-[#1a1a1a] flex items-center justify-center">
+               <div className="w-[8px] h-[8px] rounded-full bg-[#0d0d0d] border border-[#2a2a2a]"></div>
             </div>
          </div>
 
          {/* Screen Content Container */}
-         <div className="w-full h-full overflow-y-auto no-scrollbar bg-spotify-dark relative text-white snap-y snap-mandatory scroll-smooth">
+         <div className="w-full h-full overflow-y-auto no-scrollbar bg-spotify-dark relative text-white snap-y snap-mandatory scroll-smooth phone-scroll-container">
             
             {/* Mobile Navbar (Absolute within Phone) */}
             <nav className="absolute top-14 left-0 right-0 z-40 px-6 py-4 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
@@ -68,11 +94,13 @@ const App: React.FC = () => {
                   </div>
                   <span className="font-bold text-sm tracking-tight drop-shadow-md">BASF <span className="text-spotify-green">x</span> Microsoft</span>
               </div>
-              <div className="w-8 h-8 rounded-full bg-spotify-green flex items-center justify-center text-black font-bold text-xs shadow-lg ring-2 ring-black pointer-events-auto">M</div>
+              <div className="w-8 h-8 rounded-full bg-spotify-green flex items-center justify-center shadow-lg ring-2 ring-black pointer-events-auto overflow-hidden">
+                <img src="/Michael.jpg" alt="Profile" className="w-full h-full object-cover" />
+              </div>
             </nav>
 
             {/* --- HERO SECTION --- */}
-            <header className="relative h-full w-full flex flex-col items-center justify-center overflow-hidden snap-start shrink-0">
+            <header className="relative min-h-[calc(920px-100px)] w-full flex flex-col items-center justify-center overflow-hidden snap-start snap-always shrink-0">
               <div className="absolute inset-0 opacity-60">
                 <HeroScene />
               </div>
@@ -96,7 +124,7 @@ const App: React.FC = () => {
                  </p>
 
                  <button 
-                   onClick={() => setIsPlaying(!isPlaying)}
+                   onClick={togglePlay}
                    className="pointer-events-auto group relative inline-flex items-center justify-center gap-2 bg-spotify-green text-black px-8 py-3 rounded-full font-bold text-base transition-transform hover:scale-105 active:scale-95 z-20 shadow-[0_0_20px_rgba(29,185,84,0.4)]"
                  >
                     {isPlaying ? <Pause size={20} fill="black" /> : <Play size={20} fill="black" />}
@@ -116,7 +144,7 @@ const App: React.FC = () => {
             <main className="relative z-10 w-full">
               
               {/* Section 1: The Vibe */}
-              <section className="h-full w-full py-16 px-6 bg-gradient-to-b from-spotify-dark to-[#0a0a0a] snap-start flex flex-col justify-center shrink-0 box-border">
+              <section className="min-h-[calc(920px-100px)] w-full py-16 px-6 bg-gradient-to-b from-spotify-dark to-[#0a0a0a] snap-start snap-always flex flex-col justify-center shrink-0 box-border">
                   <h3 className="text-spotify-green font-bold text-sm mb-2">Your Top Genre</h3>
                   <h2 className="text-4xl font-black mb-6 leading-tight">
                       Digital<br/>Alchemy
@@ -137,7 +165,7 @@ const App: React.FC = () => {
               </section>
 
               {/* Section 2: Top Tracks */}
-              <section id="top-hits" className="h-full w-full py-16 px-6 bg-black relative overflow-hidden snap-start flex flex-col justify-center shrink-0 box-border">
+              <section id="top-hits" className="min-h-[calc(920px-100px)] w-full py-16 px-6 bg-black relative overflow-hidden snap-start snap-always flex flex-col justify-center shrink-0 box-border">
                    <div className="absolute top-0 right-0 w-64 h-64 bg-basf-neonPurple/20 rounded-full blur-[80px] pointer-events-none"></div>
                    <div className="relative z-10">
                       <h2 className="text-3xl font-black mb-2">Top Tracks</h2>
@@ -150,15 +178,15 @@ const App: React.FC = () => {
               </section>
 
               {/* Section 3: The Formula */}
-              <section id="stats" className="h-full w-full py-16 px-6 bg-spotify-dark relative snap-start flex flex-col justify-center shrink-0 box-border">
+              <section id="stats" className="min-h-[calc(920px-100px)] w-full py-16 px-6 bg-spotify-dark relative snap-start snap-always flex flex-col justify-center shrink-0 box-border">
                    <div className="absolute inset-0 z-0 opacity-40">
                        <WaveScene />
                    </div>
                    
-                   <div className="relative z-10">
-                      <h2 className="text-3xl font-black mb-6 text-center">The Formula</h2>
-                      <div className="grid grid-cols-1 gap-4">
-                          <div className="h-40">
+                   <div className="relative z-10 flex flex-col h-full justify-center">
+                      <h2 className="text-3xl font-black mb-8 text-center">The Formula</h2>
+                      <div className="flex flex-col gap-5 flex-1 max-h-[500px]">
+                          <div className="flex-1">
                             <StatCard 
                                 title="Teams Minutes" 
                                 value="525k" 
@@ -167,13 +195,22 @@ const App: React.FC = () => {
                                 icon="teams"
                             />
                           </div>
-                          <div className="h-40">
+                          <div className="flex-1">
                             <StatCard 
-                                title="Co-Pilot Prompts" 
-                                value="12k+" 
-                                subtitle="Top: 'Draft email...'" 
+                                title="Copilot Seats" 
+                                value="38k+" 
+                                subtitle="AI-powered productivity" 
                                 color="from-purple-500 to-pink-500"
                                 icon="copilot"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <StatCard 
+                                title="ACR" 
+                                value="~5M$" 
+                                subtitle="per month" 
+                                color="from-yellow-400 to-orange-500"
+                                icon="dollar"
                             />
                           </div>
                       </div>
@@ -181,7 +218,7 @@ const App: React.FC = () => {
               </section>
 
               {/* Section 4: Outtakes */}
-              <section id="outtakes" className="h-full w-full py-16 px-6 bg-gradient-to-t from-black to-spotify-dark snap-start flex flex-col justify-center shrink-0 box-border">
+              <section id="outtakes" className="min-h-[calc(920px-100px)] w-full py-16 px-6 bg-gradient-to-t from-black to-spotify-dark snap-start snap-always flex flex-col justify-center shrink-0 box-border">
                   <div className="flex items-center gap-3 mb-8">
                        <div className="w-10 h-10 bg-spotify-green rounded-full flex items-center justify-center">
                           <Heart size={18} fill="black" className="text-black" />
@@ -193,7 +230,7 @@ const App: React.FC = () => {
               </section>
 
               {/* Section 5: Farewell Susana (Metallica Theme) */}
-              <section id="farewell" className="h-full w-full py-16 px-6 bg-[#101010] snap-start flex flex-col justify-center relative overflow-hidden shrink-0 box-border">
+              <section id="farewell" className="min-h-[calc(920px-100px)] w-full py-16 px-6 bg-[#101010] snap-start snap-always flex flex-col justify-center relative overflow-hidden shrink-0 box-border">
                    {/* Grit Overlay */}
                    <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
                    
@@ -204,7 +241,7 @@ const App: React.FC = () => {
               </section>
 
               {/* Section 6: Artist */}
-              <section className="h-full w-full py-16 px-6 bg-black text-center snap-start flex flex-col justify-center shrink-0 box-border">
+              <section className="min-h-[calc(920px-100px)] w-full py-16 px-6 bg-black text-center snap-start snap-always flex flex-col justify-center shrink-0 box-border">
                   <div className="w-32 h-32 mx-auto bg-gradient-to-br from-basf-neonPurple to-basf-neonBlue rounded-full mb-6 flex items-center justify-center shadow-[0_0_30px_rgba(140,55,216,0.4)]">
                       <span className="text-4xl font-black">TM</span>
                   </div>
@@ -232,7 +269,7 @@ const App: React.FC = () => {
              </div>
              <div className="flex items-center gap-3">
                  <Heart size={20} className="text-spotify-green" fill="#1DB954" />
-                 <div onClick={() => setIsPlaying(!isPlaying)} className="cursor-pointer">
+                 <div onClick={togglePlay} className="cursor-pointer">
                     {isPlaying ? <Pause size={24} fill="white" /> : <Play size={24} fill="white" />}
                  </div>
              </div>
@@ -245,11 +282,6 @@ const App: React.FC = () => {
          {/* Home Indicator */}
          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[120px] h-[5px] bg-white/40 rounded-full z-50 pointer-events-none"></div>
 
-      </div>
-      
-      {/* Background hint text */}
-      <div className="fixed bottom-8 text-white/20 text-xs font-mono hidden md:block">
-         PRESENTATION MODE: iPhone 15 Pro Max
       </div>
     </div>
   );
