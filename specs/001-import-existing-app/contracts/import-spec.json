@@ -1,0 +1,39 @@
+{
+  "name": "Research Visualization",
+  "description": "BASF x Microsoft 2025 Wrapped — immersive Vite + React + three.js experience.",
+  "packageManager": "npm",
+  "node": ">=18.18.0",
+  "framework": "vite-react",
+  "scripts": {
+    "install": "npm install",
+    "dev": "npm run dev -- --host --port 3000",
+    "build": "npm run build",
+    "preview": "npm run preview"
+  },
+  "entry": "index.html",
+  "source": "index.tsx",
+  "buildOutput": "dist",
+  "env": [
+    {
+      "name": "GEMINI_API_KEY",
+      "required": false,
+      "description": "Optional API key wired via Vite define; current UI runs without it"
+    }
+  ],
+  "devServer": {
+    "host": "0.0.0.0",
+    "port": 3000
+  },
+  "external": {
+    "cdn": [
+      "https://aistudiocdn.com",
+      "https://cdn.tailwindcss.com",
+      "https://fonts.googleapis.com",
+      "https://fonts.gstatic.com"
+    ]
+  },
+  "notes": [
+    "Runtime uses import-map CDNs in index.html; ensure outbound access or bundle alternatives",
+    "3D scenes rely on WebGL; low-GPU devices may reduce quality"
+  ]
+}
