@@ -3,12 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Play, TrendingUp, Users, Zap, Music, MoreHorizontal, Clock, Hash, Skull, DollarSign } from 'lucide-react';
 
 // --- WRAPPED SUMMARY CARD (Top Genre Style) ---
 export const WrappedSummary: React.FC = () => {
+  const [coverSrc, setCoverSrc] = useState<string>('/headwinds-everywhere.jpg');
+
+  const fallbackCoverSrc = useMemo(() => '/Michael.jpg', []);
+
   return (
     <motion.div 
         initial={{ opacity: 0, scale: 0.9, rotate: -5 }}
@@ -16,18 +20,33 @@ export const WrappedSummary: React.FC = () => {
         transition={{ duration: 0.8, type: 'spring' }}
         className="relative w-full h-full bg-gradient-to-br from-basf-neonPurple via-basf-neonBlue to-spotify-green p-1 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
     >
-        <div className="w-full h-full bg-black/20 backdrop-blur-sm rounded-[20px] p-8 flex flex-col justify-between relative overflow-hidden border border-white/20">
+        <div className="w-full h-full bg-black/20 rounded-[20px] p-8 flex flex-col justify-between relative overflow-hidden border border-white/20">
+            {/* Album cover photo */}
+            <img
+                src={coverSrc}
+                alt="Album cover"
+                className="absolute inset-0 w-full h-full object-cover opacity-70"
+                onError={() => {
+                    if (coverSrc !== fallbackCoverSrc) setCoverSrc(fallbackCoverSrc);
+                }}
+            />
+
+            {/* Legibility overlay */}
+            <div className="absolute inset-0 bg-black/35" />
+
             {/* Decorative shapes */}
             <div className="absolute top-[-50px] right-[-50px] w-64 h-64 bg-spotify-green rounded-full blur-[80px] opacity-60 mix-blend-screen animate-pulse"></div>
             <div className="absolute bottom-[-20px] left-[-20px] w-48 h-48 bg-basf-neonPurple rounded-full blur-[60px] opacity-60 mix-blend-screen"></div>
 
             <div className="relative z-10">
                 <div className="text-xs font-bold uppercase tracking-widest text-white/80 mb-2">BASF x Microsoft</div>
-                <div className="text-4xl font-black text-white leading-none">2025<br/>WRAPPED</div>
+                <div className="text-3xl font-black text-white leading-tight">
+                    2025: <br />Headwinds Everywhere
+                </div>
             </div>
 
             <div className="relative z-10 self-center">
-                 <div className="w-48 h-48 bg-white/10 rounded-full border-4 border-white/20 flex items-center justify-center backdrop-blur-md shadow-2xl animate-spin-slow">
+                  <div className="w-48 h-48 bg-white/5 rounded-full border-4 border-white/20 flex items-center justify-center backdrop-blur-sm shadow-2xl animate-spin-slow">
                     <div className="w-16 h-16 bg-white rounded-full"></div>
                     <div className="absolute inset-0 rounded-full border-t-4 border-spotify-green"></div>
                  </div>
@@ -52,7 +71,8 @@ export const MetallicaCard: React.FC = () => {
     return (
         <motion.div
             initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
             className="w-full aspect-square bg-neutral-900 rounded-lg overflow-hidden relative shadow-[0_0_40px_rgba(0,0,0,0.8)] border border-white/10 group"
         >
              {/* Album Art Background */}
@@ -124,11 +144,11 @@ const Track: React.FC<TrackProps> = ({ index, title, artist, plays, duration }) 
 
 export const Playlist: React.FC = () => {
     const tracks = [
-        { title: "Project ChemAI", artist: "Optimization • Azure OpenAI", plays: "High Impact", duration: "Q1" },
-        { title: "Verbund Data Lake", artist: "Infrastructure • Foundation", plays: "Scale", duration: "Q2" },
-        { title: "Supply Chain Symphony", artist: "Dynamics 365 • Real-time", plays: "Efficiency", duration: "Q2" },
-        { title: "Sustainability Dashboard", artist: "ESG • Green Energy", plays: "Future Ready", duration: "Q3" },
-        { title: "Co-Pilot Rollout", artist: "Productivity • The Tour", plays: "Viral", duration: "Q4" },
+        { title: "Copilot Adoption", artist: "Success • Everyday AI", plays: "High", duration: "Q1" },
+        { title: "Market Place Success", artist: "Commercial Excellence • Foundation", plays: "Grow", duration: "Q2" },
+        { title: "Exchange with the Business", artist: "Coatings • AP • ECMS", plays: "Critical", duration: "Q3" },
+        { title: "Agentic Transformation", artist: "First-of-a-kind", plays: "Fantastic", duration: "Q3" },
+        { title: "Global Footprint", artist: "Global Presence", plays: "Critical", duration: "Q4" },
     ];
 
     return (

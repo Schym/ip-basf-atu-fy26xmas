@@ -68,7 +68,15 @@
       /* Phone scroll container - enforce scroll snap */
       .phone-scroll-container {
           scroll-snap-type: y mandatory !important;
+          overscroll-behavior-y: contain;
       }
+
+        /* Treat each marked element as a full page */
+        .phone-scroll-container [data-snap-page] {
+          height: 100%;
+          scroll-snap-align: start;
+          scroll-snap-stop: always;
+        }
       
       /* Shake animation for wrong PIN */
       @keyframes shake {
