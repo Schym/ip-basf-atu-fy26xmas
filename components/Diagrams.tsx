@@ -25,14 +25,14 @@ export const WrappedSummary: React.FC = () => {
             <img
                 src={coverSrc}
                 alt="Album cover"
-                className="absolute inset-0 w-full h-full object-cover opacity-70"
+                className="absolute inset-0 w-full h-full object-cover opacity-85"
                 onError={() => {
                     if (coverSrc !== fallbackCoverSrc) setCoverSrc(fallbackCoverSrc);
                 }}
             />
 
             {/* Legibility overlay */}
-            <div className="absolute inset-0 bg-black/35" />
+            <div className="absolute inset-0 bg-black/20" />
 
             {/* Decorative shapes */}
             <div className="absolute top-[-50px] right-[-50px] w-64 h-64 bg-spotify-green rounded-full blur-[80px] opacity-60 mix-blend-screen animate-pulse"></div>
@@ -46,7 +46,7 @@ export const WrappedSummary: React.FC = () => {
             </div>
 
             <div className="relative z-10 self-center">
-                  <div className="w-48 h-48 bg-white/5 rounded-full border-4 border-white/20 flex items-center justify-center backdrop-blur-sm shadow-2xl animate-spin-slow">
+                  <div className="w-48 h-48 bg-white/5 rounded-full border-4 border-white/20 flex items-center justify-center shadow-2xl animate-spin-slow">
                     <div className="w-16 h-16 bg-white rounded-full"></div>
                     <div className="absolute inset-0 rounded-full border-t-4 border-spotify-green"></div>
                  </div>
