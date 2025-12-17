@@ -370,7 +370,7 @@ const App: React.FC = () => {
   // Set volume when audio loads
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = 0.15; // Very low volume
+      audioRef.current.volume = 0.08; // Very low volume
     }
   }, []);
 
@@ -435,7 +435,7 @@ const App: React.FC = () => {
       if (isPlaying) {
         audioRef.current.pause();
       } else {
-        audioRef.current.volume = 0.15;
+        audioRef.current.volume = 0.08;
         audioRef.current.play();
       }
       setIsPlaying(!isPlaying);
@@ -450,9 +450,31 @@ const App: React.FC = () => {
   const startWrapped = () => {
     setStage('wrapped');
     if (audioRef.current) {
-      audioRef.current.volume = 0.15;
-      audioRef.current.play();
+      const audio = audioRef.current;
+      audio.volume = 0.08; // Even lower starting volume
+      audio.play();
       setIsPlaying(true);
+      
+      // Fade out after 10 seconds
+      setTimeout(() => {
+        const fadeOutDuration = 3000; // 3 seconds fade
+        const fadeOutSteps = 30;
+        const stepTime = fadeOutDuration / fadeOutSteps;
+        const volumeStep = audio.volume / fadeOutSteps;
+        
+        let currentStep = 0;
+        const fadeInterval = setInterval(() => {
+          currentStep++;
+          const newVolume = Math.max(0, audio.volume - volumeStep);
+          audio.volume = newVolume;
+          
+          if (currentStep >= fadeOutSteps || newVolume <= 0) {
+            clearInterval(fadeInterval);
+            audio.pause();
+            setIsPlaying(false);
+          }
+        }, stepTime);
+      }, 10000); // Start fade after 10 seconds
     }
   };
 
