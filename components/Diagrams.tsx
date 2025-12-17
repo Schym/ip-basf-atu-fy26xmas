@@ -71,6 +71,14 @@ export const MetallicaCard: React.FC = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const videoRef = React.useRef<HTMLVideoElement>(null);
 
+    // Preload video on component mount
+    React.useEffect(() => {
+        const video = document.createElement('video');
+        video.preload = 'auto';
+        video.src = '/Video_Generation_Susana_s_Goodbye_Message.mp4';
+        video.load();
+    }, []);
+
     const handlePlay = () => {
         setIsPlaying(true);
         setTimeout(() => {
@@ -94,20 +102,16 @@ export const MetallicaCard: React.FC = () => {
             transition={{ duration: 0.6, ease: 'easeOut' }}
             className="w-full aspect-square bg-black rounded-lg overflow-hidden relative shadow-[0_0_40px_rgba(0,0,0,0.8)] border border-white/10 group"
         >
-             {/* Video Player - always in DOM, visibility controlled */}
-             {isPlaying && (
-                 <div className="absolute inset-0 z-50 bg-black overflow-hidden">
-                     <video
-                         ref={videoRef}
-                         src="/Video_Generation_Susana_s_Goodbye_Message.mp4"
-                         className="w-full h-full object-cover bg-black scale-[1.15] translate-y-[-5%]"
-                         onEnded={handleVideoEnd}
-                         controls
-                         playsInline
-                         autoPlay
-                     />
-                 </div>
-             )}
+             {/* Hidden video element for preloading */}
+             <video
+                 ref={videoRef}
+                 src="/Video_Generation_Susana_s_Goodbye_Message.mp4"
+                 className={`absolute inset-0 w-full h-full object-cover bg-black scale-[1.15] translate-y-[-5%] ${isPlaying ? 'z-50' : 'z-0 opacity-0 pointer-events-none'}`}
+                 onEnded={handleVideoEnd}
+                 controls={isPlaying}
+                 playsInline
+                 preload="auto"
+             />
 
              {/* Album Art Background - hidden when video plays */}
              {!isPlaying && (
