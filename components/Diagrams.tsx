@@ -82,6 +82,9 @@ export const MetallicaCard: React.FC = () => {
 
     const handleVideoEnd = () => {
         setIsPlaying(false);
+        if (videoRef.current) {
+            videoRef.current.currentTime = 0;
+        }
     };
 
     return (
@@ -89,45 +92,32 @@ export const MetallicaCard: React.FC = () => {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="w-full aspect-square bg-neutral-900 rounded-lg overflow-hidden relative shadow-[0_0_40px_rgba(0,0,0,0.8)] border border-white/10 group"
+            className="w-full aspect-square bg-black rounded-lg overflow-hidden relative shadow-[0_0_40px_rgba(0,0,0,0.8)] border border-white/10 group"
         >
-             {/* Video Player (shown when playing) */}
-             <motion.div 
-                 initial={false}
-                 animate={{ opacity: isPlaying ? 1 : 0 }}
-                 transition={{ duration: 0.5 }}
-                 className={`absolute inset-0 z-30 ${isPlaying ? 'pointer-events-auto' : 'pointer-events-none'}`}
-             >
-                 <video
-                     ref={videoRef}
-                     src="/Video_Generation_Susana_s_Goodbye_Message.mp4"
-                     className="w-full h-full object-cover"
-                     onEnded={handleVideoEnd}
-                     controls={isPlaying}
-                     playsInline
-                 />
-             </motion.div>
+             {/* Video Player - always in DOM, visibility controlled */}
+             {isPlaying && (
+                 <div className="absolute inset-0 z-50 bg-black">
+                     <video
+                         ref={videoRef}
+                         src="/Video_Generation_Susana_s_Goodbye_Message.mp4"
+                         className="w-full h-full object-contain bg-black"
+                         onEnded={handleVideoEnd}
+                         controls
+                         playsInline
+                         autoPlay
+                     />
+                 </div>
+             )}
 
-             {/* Album Art Background */}
-             <motion.div 
-                 animate={{ opacity: isPlaying ? 0 : 1 }}
-                 transition={{ duration: 0.5 }}
-                 className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-black z-0"
-             ></motion.div>
+             {/* Album Art Background - hidden when video plays */}
+             {!isPlaying && (
+             <>
+             <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-black z-0"></div>
              
              {/* "Texture" */}
-             <motion.div 
-                 animate={{ opacity: isPlaying ? 0 : 0.2 }}
-                 transition={{ duration: 0.5 }}
-                 className="absolute inset-0" 
-                 style={{backgroundImage: 'repeating-linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), repeating-linear-gradient(45deg, #000 25%, #111 25%, #111 75%, #000 75%, #000)', backgroundPosition: '0 0, 10px 10px', backgroundSize: '20px 20px'}}
-             ></motion.div>
+             <div className="absolute inset-0 opacity-20" style={{backgroundImage: 'repeating-linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), repeating-linear-gradient(45deg, #000 25%, #111 25%, #111 75%, #000 75%, #000)', backgroundPosition: '0 0, 10px 10px', backgroundSize: '20px 20px'}}></div>
 
-             <motion.div 
-                 animate={{ opacity: isPlaying ? 0 : 1, scale: isPlaying ? 0.8 : 1 }}
-                 transition={{ duration: 0.5 }}
-                 className="relative z-10 h-full flex flex-col items-center justify-center p-6 text-center"
-             >
+             <div className="relative z-10 h-full flex flex-col items-center justify-center p-6 text-center">
                  {/* Band Name Style */}
                  <div className="mb-4">
                      <h2 className="text-4xl font-extrabold text-white tracking-widest" style={{ fontFamily: 'serif', transform: 'scaleY(1.5)' }}>SUSANA</h2>
@@ -152,10 +142,9 @@ export const MetallicaCard: React.FC = () => {
                  <div className="absolute bottom-4 right-4 border border-white/30 px-1 py-0.5 rounded-[2px]">
                      <span className="text-[8px] font-bold text-white/50 block leading-tight">PARENTAL<br/>ADVISORY</span>
                  </div>
-             </motion.div>
+             </div>
              
              {/* Play Overlay */}
-             {!isPlaying && (
              <div 
                  onClick={handlePlay}
                  className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 cursor-pointer"
@@ -164,6 +153,7 @@ export const MetallicaCard: React.FC = () => {
                      <Play size={24} fill="black" className="text-black" />
                  </div>
              </div>
+             </>
              )}
         </motion.div>
     )
