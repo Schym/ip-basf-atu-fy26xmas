@@ -337,6 +337,7 @@ const BootScreen: React.FC<{ onDone: () => void }> = ({ onDone }) => {
 const App: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [stage, setStage] = useState<AppStage>('locked');
+  const [showPlayerBar, setShowPlayerBar] = useState(true);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState("");
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -353,7 +354,7 @@ const App: React.FC = () => {
     { title: 'Cloud', subtitle: 'Transformation & scale', status: 'onTrack' as const, progress: 87 },
     { title: 'Partnership', subtitle: 'Executive alignment', status: 'onTrack' as const, progress: 89 },
     { title: 'OT Digitalization', subtitle: 'Use cases & adoption', status: 'attention' as const, progress: 70 },
-    { title: 'MACC & MP', subtitle: 'Marketplace outcomes', status: 'attention' as const, progress: 73 },
+    { title: 'MACC & MP', subtitle: 'Marketplace outcomes', status: 'onTrack' as const, progress: 88 },
   ];
 
   const okrCounts = okrs.reduce(
@@ -449,6 +450,13 @@ const App: React.FC = () => {
 
   const startWrapped = () => {
     setStage('wrapped');
+    setShowPlayerBar(true); // Show player bar initially
+    
+    // Hide player bar after 5 seconds with fade
+    setTimeout(() => {
+      setShowPlayerBar(false);
+    }, 5000);
+    
     if (audioRef.current) {
       const audio = audioRef.current;
       audio.volume = 0.08; // Even lower starting volume
@@ -810,8 +818,13 @@ const App: React.FC = () => {
          </div>
 
          {/* --- PLAYER BAR (Floating Overlay) --- */}
-         {stage === 'wrapped' && (
-         <div className="absolute bottom-6 left-4 right-4 bg-[#282828] rounded-xl p-2 pr-4 flex items-center justify-between shadow-2xl border border-white/5 z-40 backdrop-blur-md bg-opacity-95">
+         <AnimatePresence>
+         {stage === 'wrapped' && showPlayerBar && (
+         <motion.div 
+            initial={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            transition={{ duration: 0.8, ease: 'easeInOut' }}
+            className="absolute bottom-6 left-4 right-4 bg-[#282828] rounded-xl p-2 pr-4 flex items-center justify-between shadow-2xl border border-white/5 z-40 backdrop-blur-md bg-opacity-95">
              <div className="flex items-center gap-3 overflow-hidden">
                 <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-md flex-shrink-0 flex items-center justify-center">
                     <Music2 size={16} className="text-white" />
@@ -831,8 +844,9 @@ const App: React.FC = () => {
              <div className="absolute bottom-0 left-2 right-2 h-[2px] bg-white/10 rounded-full overflow-hidden">
                  <div className="h-full bg-white w-1/3 animate-pulse"></div>
              </div>
-           </div>
+           </motion.div>
            )}
+         </AnimatePresence>
 
          {/* Home Indicator */}
          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[120px] h-[5px] bg-white/40 rounded-full z-50 pointer-events-none"></div>
