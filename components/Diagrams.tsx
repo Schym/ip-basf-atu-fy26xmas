@@ -96,11 +96,11 @@ export const MetallicaCard: React.FC = () => {
         >
              {/* Video Player - always in DOM, visibility controlled */}
              {isPlaying && (
-                 <div className="absolute inset-0 z-50 bg-black">
+                 <div className="absolute inset-0 z-50 bg-black overflow-hidden">
                      <video
                          ref={videoRef}
                          src="/Video_Generation_Susana_s_Goodbye_Message.mp4"
-                         className="w-full h-full object-contain bg-black"
+                         className="w-full h-full object-cover bg-black scale-[1.15] translate-y-[-5%]"
                          onEnded={handleVideoEnd}
                          controls
                          playsInline
