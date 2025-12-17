@@ -68,6 +68,22 @@ export const WrappedSummary: React.FC = () => {
 
 // --- METALLICA CARD (Farewell) ---
 export const MetallicaCard: React.FC = () => {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const videoRef = React.useRef<HTMLVideoElement>(null);
+
+    const handlePlay = () => {
+        setIsPlaying(true);
+        setTimeout(() => {
+            if (videoRef.current) {
+                videoRef.current.play();
+            }
+        }, 100);
+    };
+
+    const handleVideoEnd = () => {
+        setIsPlaying(false);
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -75,13 +91,43 @@ export const MetallicaCard: React.FC = () => {
             transition={{ duration: 0.6, ease: 'easeOut' }}
             className="w-full aspect-square bg-neutral-900 rounded-lg overflow-hidden relative shadow-[0_0_40px_rgba(0,0,0,0.8)] border border-white/10 group"
         >
+             {/* Video Player (shown when playing) */}
+             <motion.div 
+                 initial={false}
+                 animate={{ opacity: isPlaying ? 1 : 0 }}
+                 transition={{ duration: 0.5 }}
+                 className={`absolute inset-0 z-30 ${isPlaying ? 'pointer-events-auto' : 'pointer-events-none'}`}
+             >
+                 <video
+                     ref={videoRef}
+                     src="/Video_Generation_Susana_s_Goodbye_Message.mp4"
+                     className="w-full h-full object-cover"
+                     onEnded={handleVideoEnd}
+                     controls={isPlaying}
+                     playsInline
+                 />
+             </motion.div>
+
              {/* Album Art Background */}
-             <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-black z-0"></div>
+             <motion.div 
+                 animate={{ opacity: isPlaying ? 0 : 1 }}
+                 transition={{ duration: 0.5 }}
+                 className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-black z-0"
+             ></motion.div>
              
              {/* "Texture" */}
-             <div className="absolute inset-0 opacity-20" style={{backgroundImage: 'repeating-linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), repeating-linear-gradient(45deg, #000 25%, #111 25%, #111 75%, #000 75%, #000)', backgroundPosition: '0 0, 10px 10px', backgroundSize: '20px 20px'}}></div>
+             <motion.div 
+                 animate={{ opacity: isPlaying ? 0 : 0.2 }}
+                 transition={{ duration: 0.5 }}
+                 className="absolute inset-0" 
+                 style={{backgroundImage: 'repeating-linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), repeating-linear-gradient(45deg, #000 25%, #111 25%, #111 75%, #000 75%, #000)', backgroundPosition: '0 0, 10px 10px', backgroundSize: '20px 20px'}}
+             ></motion.div>
 
-             <div className="relative z-10 h-full flex flex-col items-center justify-center p-6 text-center">
+             <motion.div 
+                 animate={{ opacity: isPlaying ? 0 : 1, scale: isPlaying ? 0.8 : 1 }}
+                 transition={{ duration: 0.5 }}
+                 className="relative z-10 h-full flex flex-col items-center justify-center p-6 text-center"
+             >
                  {/* Band Name Style */}
                  <div className="mb-4">
                      <h2 className="text-4xl font-extrabold text-white tracking-widest" style={{ fontFamily: 'serif', transform: 'scaleY(1.5)' }}>SUSANA</h2>
@@ -106,14 +152,19 @@ export const MetallicaCard: React.FC = () => {
                  <div className="absolute bottom-4 right-4 border border-white/30 px-1 py-0.5 rounded-[2px]">
                      <span className="text-[8px] font-bold text-white/50 block leading-tight">PARENTAL<br/>ADVISORY</span>
                  </div>
-             </div>
+             </motion.div>
              
              {/* Play Overlay */}
-             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                 <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center pl-1 cursor-pointer hover:scale-105 transition-transform">
+             {!isPlaying && (
+             <div 
+                 onClick={handlePlay}
+                 className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 cursor-pointer"
+             >
+                 <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center pl-1 hover:scale-105 transition-transform">
                      <Play size={24} fill="black" className="text-black" />
                  </div>
              </div>
+             )}
         </motion.div>
     )
 }
